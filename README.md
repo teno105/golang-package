@@ -38,6 +38,7 @@ go mod init golang-package
 
 mkdir -p cmd/golang-package
 mkdir -p pkg/publicpkg
+mkdir -p pkg/exinit
 ```
 
 ### 2. 패키지 사용하기
@@ -226,3 +227,55 @@ make run
 
 ### 6. 패키지 초기화
 
+```go
+// pkg/exinit/exinit.go
+package exinit
+
+import "fmt"
+
+var (
+	a = c + b
+	b = f()
+	c = f()
+	d = 3
+)
+
+func init() {
+	d++
+	fmt.Println("init function", d)
+}
+
+func f() int {
+	d++
+	fmt.Println("f() d:", d)
+	return d
+}
+
+func PrintD() {
+	fmt.Println("d:", d)
+}
+```
+
+```go
+// cmd/golang-package/main.go
+package main
+
+import (
+    "fmt"
+	"golang-package/pkg/exinit"
+)
+
+func main() {
+	fmt.Println("main function")
+	exinit.PrintD()
+}
+```
+
+이제 `make run` 명령을 사용하면 패키지의 초기화 흐름이 출력됩니다.
+
+```bash
+make run
+```
+
+패키지를 임포트하면 패키지 초기화가 시작되는데,
+이때 먼저 패키지의 모든 전역 변수들이 초기화되고, 그다음에 init() 함수가 호출됩니다.
