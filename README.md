@@ -49,14 +49,17 @@ struct 를 선언 및 활용하는 코드를 작성합니다.
 // cmd/golang-package/main.go
 package main
 
-import "fmt"
+import (
+    "fmt"
+    "math/rand"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	fmt.Println(rand.Int()) // 랜덤한 숫자값을 출력합니다.
 }
 ```
 
-이 코드를 통해 프로그램을 실행하면 구조체의 정보가 출력됩니다.
+이 코드를 통해 프로그램을 실행하면 rand.Int()의 값이 출력됩니다.
 
 ### 3. `Makefile` 작성
 
