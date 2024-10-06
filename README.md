@@ -17,8 +17,8 @@ golang-package/
 │       └── main.go
 │
 ├── pkg/
-│   └── custompkg/
-│       └── custompkg.go
+│   └── publicpkg/
+│       └── publicpkg.go
 │
 ├── go.mod
 ├── Makefile
@@ -37,7 +37,7 @@ cd golang-package
 go mod init golang-package
 
 mkdir -p cmd/golang-package
-mkdir -p pkg/custompkg
+mkdir -p pkg/publicpkg
 ```
 
 ### 2. 패키지 사용하기
@@ -128,10 +128,14 @@ make run
 // cmd/golang-package/main.go
 package main
 
-import "fmt"
+import (
+    "text/template"
+	htemplate "html/template"
+)
 
 func main() {
-	fmt.Println("Hello World")
+	template.New("foo").Parse(`{{define "T"}}Hello`)
+	htemplate.New("foo").Parse(`{{define "T"}}Hello`)
 }
 ```
 
@@ -142,6 +146,82 @@ make run
 ```
 
 ### 5. 패키지명과 패키지 외부 공개
+
+```go
+// pkg/publicpkg/publicpkg.go
+package publicpkg
+
+import "fmt"
+
+const (
+	PI = 3.1415	// 공개되는 상수
+	pi = 3.141516	// 공개되지 않는 상수
+)
+
+var ScreenSize int = 1080	// 공개되는 변수
+var screenHeight int	// 공개되지 않는 변수
+
+func PublicFunc() {	// 공개되는 함수
+	const MyConst = 100	// 공개되지 않습니다.
+	fmt.Println("This is a public function", MyConst)
+}
+
+func privateFunc() { // 공개되지 않는 함수
+	fmt.Println("This is a ㅔ걒ㅁㅅㄷ function")
+}
+
+type MyInt int	// 공개되는 별칭 타입
+type myString string	// 공개되지 않는 별치 타입
+
+type MyStruct struct {	// 공개되는 구조체
+	Age	MyInt	// 공개되는 구조체 필드
+	name string	// 공개되지 않는 구조체 필드
+}
+
+func (m MyStruct) PublicMethod() {	// 공개되는 메서드
+	fmt.Println("This is a public method")
+}
+
+func (m MyStruct) privateMethod() {	// 공개되지 않는 메서드
+	fmt.Println("This is a private method")
+}
+
+type myPrivateStruct struct {	// 공개되지 않는 구조체
+	Age	MyInt	// 공개되지 않는 구조체 필드
+	name string	// 공개되지 않는 구조체 필드
+}
+
+func (m myPrivateStruct) PrivateMethod() {	// 공개되지 않는 메서드
+	fmt.Println("This is a private method")
+}
+```
+
+```go
+// cmd/golang-package/main.go
+package main
+
+import (
+    "fmt"
+	"pkg/publicpkg"
+)
+
+func main() {
+	fmt.Println("PI:", publicpkg.PI)	// 공개되는 상수 접근
+	publicpkg.PublicFunc()		// 공개되는 함수 호출
+
+	var myint publicpkg.MyInt = 10	// 공개되는 별칭 타입 사용
+	fmt.Println("myint:", myint)
+
+	var mystruct = publicpkg.MyStruct{Age: 18}	// 구조체 사용
+	fmt.Println("mystruct:", mystruct)
+}
+```
+
+이제 `make run` 명령을 사용하면 패키지 공개 변수, 함수를 접근해서 출력됩니다.
+
+```bash
+make run
+```
 
 
 ### 6. 패키지 초기화
