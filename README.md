@@ -4,7 +4,7 @@
 
 # golang-package
 
-`golang-package`는 Golang으로 작성된 간단한 애플리케이션으로, 포인터의 사용을 익히기 위한 실습입니다.
+`golang-package`는 Golang으로 작성된 간단한 애플리케이션으로, 패키지의 사용을 익히기 위한 실습입니다.
 
 
 ## 프로젝트 구조
